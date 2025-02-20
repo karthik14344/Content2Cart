@@ -15,7 +15,7 @@ class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Update this with your API URL
-  static const String apiBaseUrl = 'http://192.168.1.9:3000'; // change here
+  static const String apiBaseUrl = 'http://172.19.25.47:3000'; // change here
 
   // Storage path helpers
   String _getMainImagePath(String userId, String productId) {
@@ -103,7 +103,7 @@ class FirebaseService {
   }
 
   // Get user posts stream
-  Stream<QuerySnapshot> getUserPosts() {
+  Stream<QuerySnapshot> getLatestPosts() {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
       return Stream.empty();
@@ -114,8 +114,52 @@ class FirebaseService {
         .doc(userId)
         .collection('posts')
         .orderBy('created_at', descending: true)
+        .limit(5)
         .snapshots();
   }
+
+Stream<QuerySnapshot> getConvertedProducts() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      return Stream.empty();
+    }
+
+    try {
+      return _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('posts')
+          .where('is_converted', isEqualTo: true)
+          .orderBy('created_at', descending: true)
+          .snapshots()
+          .handleError((error) {
+        print('Error in getConvertedProducts: $error');
+        if (error.toString().contains('requires an index')) {
+          print('Index required. Please create the index in Firebase Console.');
+          // Return an empty stream instead
+          return Stream.value([]);
+        }
+        throw error;
+      }, test: (error) => error is Exception);
+    } catch (e) {
+      print('Caught error in getConvertedProducts: $e');
+      return Stream.empty();
+    }
+  }
+
+  // Add this method to your FirebaseService class
+  Future<void> updatePost(String postId, Map<String, dynamic> data) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) throw Exception('User not logged in');
+
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('posts')
+        .doc(postId)
+        .update(data);
+  }
+
 
   // Main method to convert and store images
   Future<bool> convertAndStoreImage(String postUrl) async {
@@ -300,5 +344,18 @@ class FirebaseService {
       print('Error in deletePost: $e');
       throw e;
     }
+  }
+  Future<void> updatePublishStatus(String postId) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) throw Exception('User not logged in');
+
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('posts')
+        .doc(postId)
+        .update({
+      'is_published': true,
+    });
   }
 }

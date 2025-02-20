@@ -1,8 +1,10 @@
+import 'package:content2cart/providers/dashboard_provider.dart';
 import 'package:content2cart/screens/about_us_screen.dart';
 import 'package:content2cart/screens/link_social_media_screen.dart';
 import 'package:content2cart/screens/posts_listing_screen.dart';
 import 'package:content2cart/screens/project_info_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -114,10 +116,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   icon: Icon(Icons.info),
                   label: Text('About Us'),
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.article),
-                  label: Text('Project Info'),
-                ),
+                // NavigationRailDestination(
+                //   icon: Icon(Icons.article),
+                //   label: Text('Project Info'),
+                // ),
               ],
             ),
           Expanded(
@@ -141,8 +143,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return PostsListing();
       case 3:
         return AboutUsView();
-      case 4:
-        return ProjectInfoView();
+      // case 4:
+      //   return ProjectInfoView();
       default:
         return DashboardView();
     }
@@ -224,11 +226,11 @@ class NavigationDrawer extends StatelessWidget {
   }
 }
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     bool isMobile = MediaQuery.of(context).size.width < 600;
-
+    final statsAsync = ref.watch(dashboardStatsProvider);
     return Scaffold(
       body: Stack(
         children: [
@@ -247,56 +249,64 @@ class DashboardView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 32),
-                // Wrap for flexible card layout
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: [
-                    _buildCard(
-                      'Total Listings',
-                      '',
-                      Icons.list_alt,
-                      Colors.green,
+                statsAsync.when(
+                  data: (stats) => Wrap(
+                    spacing: 20,
+                    runSpacing: 20,
+                    children: [
+                      _buildCard(
+                        'Total Listings',
+                        stats.totalListings.toString(),
+                        Icons.list_alt,
+                        Colors.green,
+                      ),
+                      _buildCard(
+                        'Approved Listings',
+                        stats.approvedListings.toString(),
+                        Icons.check_circle,
+                        Colors.orange,
+                      ),
+                      _buildCard(
+                        'Disapproved Listings',
+                        stats.disapprovedListings.toString(),
+                        Icons.cancel,
+                        Colors.grey,
+                      ),
+                      _buildCard(
+                        'Connected Social Media',
+                        '1',
+                        Icons.people,
+                        Colors.purple,
+                      ),
+                      _buildCard(
+                        'Instagram Listing',
+                        '0',
+                        MdiIcons.instagram,
+                        Colors.red,
+                      ),
+                      _buildCard(
+                        'Facebook Listing',
+                        '0',
+                        Icons.facebook,
+                        Colors.blue,
+                      ),
+                      // _buildCard(
+                      //   'TikTok Listing',
+                      //   '0',
+                      //   Icons.tiktok,
+                      //   Colors.black,
+                      // ),
+                    ],
+                  ),
+                  loading: () => Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
                     ),
-                    _buildCard(
-                      'Approved Listings',
-                      '',
-                      Icons.check_circle,
-                      Colors.orange,
-                    ),
-                    _buildCard(
-                      'Disapproved Listings',
-                      '',
-                      Icons.cancel,
-                      Colors.grey,
-                    ),
-                    _buildCard(
-                      'Connected Social Media',
-                      '3',
-                      Icons.people,
-                      Colors.purple,
-                    ),
-                    _buildCard(
-                      'Instagram Listing',
-                      '0',
-                      MdiIcons.instagram,
-                      Colors.red,
-                    ),
-                    _buildCard(
-                      'Facebook Listing',
-                      '0',
-                      Icons.facebook,
-                      Colors.blue,
-                    ),
-                    _buildCard(
-                      'TikTok Listing',
-                      '0',
-                      Icons.tiktok,
-                      Colors.black,
-                    ),
-                  ],
+                  ),
+                  error: (error, stack) => Center(
+                    child: Text('Error loading dashboard stats: $error'),
+                  ),
                 ),
-                // Add extra space for footer
                 SizedBox(height: 100),
               ],
             ),

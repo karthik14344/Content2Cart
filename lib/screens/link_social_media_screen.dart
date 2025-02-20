@@ -50,12 +50,12 @@ class LinkSocialView extends StatelessWidget {
                       'Facebook',
                       'Connect your Facebook account',
                     ),
-                    _buildSocialCard(
-                      context,
-                      'assets/images/tiktok_logo.png',
-                      'TikTok',
-                      'Connect your TikTok account',
-                    ),
+                    // _buildSocialCard(
+                    //   context,
+                    //   'assets/images/tiktok_logo.png',
+                    //   'TikTok',
+                    //   'Connect your TikTok account',
+                    // ),
                   ],
                 ),
                 // Activity Section

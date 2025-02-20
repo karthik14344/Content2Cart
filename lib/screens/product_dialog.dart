@@ -216,7 +216,7 @@ class _ProductDialogState extends State<ProductDialog> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
-                      'Fulfilled',
+                      'Trusted',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -282,7 +282,7 @@ class _ProductDialogState extends State<ProductDialog> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
-                    'Fulfilled',
+                    'Trusted',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

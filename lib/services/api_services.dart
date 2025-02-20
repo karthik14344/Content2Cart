@@ -8,7 +8,7 @@ import 'dart:convert';
 
 class ApiService {
   // Remove trailing slash from baseUrl
-  static const String baseUrl = 'http://192.168.1.9:3000/api'; // change here
+  static const String baseUrl = 'http://172.19.25.47:3000/api'; // change here
   final AuthService _authService = AuthService();
 
   // Helper method to build URLs correctly
@@ -73,7 +73,7 @@ class ApiService {
             body: jsonEncode({'username': username}),
           )
           .timeout(
-            const Duration(seconds: 30),
+            const Duration(seconds: 110),
             onTimeout: () =>
                 throw TimeoutException('Request timed out after 30 seconds'),
           );

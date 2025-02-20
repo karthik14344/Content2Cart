@@ -197,11 +197,11 @@ class HeroSection extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DashboardScreen()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => DashboardScreen()),
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
